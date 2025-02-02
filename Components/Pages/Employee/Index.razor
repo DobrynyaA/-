@@ -1,0 +1,52 @@
+﻿@page "/Employees"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
+@using NikePro.Interfaces.ProductInterfaces
+@using NikePro.Interfaces
+@using NikePro.Data
+@using Microsoft.AspNetCore.Components.QuickGrid
+@inject IEmployeeService EmployeeService
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject ApplicationDbContext dbContext
+
+<PageTitle>Employees</PageTitle>
+<h1>Сотрудники</h1>
+<p>
+    <a href="/Employees/Create">Добавить нового сотрудника</a>
+</p>
+
+<QuickGrid Class="table" Sortable="true" Items="users">
+    <PropertyColumn Title="Фамиля" Property="worker => worker.Surname" />
+    <PropertyColumn Title="Имя" Property="worker => worker.Name" />
+    <PropertyColumn Title="Отчество" Property="worker => worker.Patronymic" />
+
+    <TemplateColumn Context="employee">
+        <a href="@($"Employees/Edit?userId={employee.Id}")">Редактировать</a>
+        <a href="@($"Employees/Delete?userId={employee.Id}")">Удалить</a>|
+        <a href="@($"Employees/Details?userId={employee.Id}")">Просмотр</a>|
+    </TemplateColumn>
+</QuickGrid>
+@code {
+    private IQueryable<Employee> employees { get; set; }
+    private IQueryable<ApplicationUser> users { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var roleName = "Employee";
+
+        var usersWithRole = dbContext.Users
+            .Join(dbContext.UserRoles,
+                  user => user.Id,
+                  userRole => userRole.UserId,
+                  (user, userRole) => new { user, userRole })
+            .Join(dbContext.Roles,
+                  ur => ur.userRole.RoleId,
+                  role => role.Id,
+                  (ur, role) => new { ur.user, role })
+            .Where(x => x.role.Name == roleName)
+            .Select(x => x.user)
+            .ToList();
+        users = usersWithRole.AsQueryable();
+    }
+}

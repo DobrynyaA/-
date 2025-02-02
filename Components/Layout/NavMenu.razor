@@ -1,0 +1,126 @@
+﻿@implements IDisposable
+
+@inject NavigationManager NavigationManager
+
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">NikePro</a>
+    </div>
+</div>
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="flex-column">
+        <AuthorizeView>
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="Account/Manage">
+                         Профиль
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                         Категории товаров
+                    </NavLink>
+                </div>
+                
+            </Authorized>
+            <NotAuthorized>
+            <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="Account/Register">
+                         Регистрация
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="Account/Login">
+                         Вход
+                    </NavLink>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
+        <AuthorizeView Roles="Client">
+            <Authorized>
+                <div class="nav-item px-3">
+                <NavLink class="nav-link" href="Cart" Match="NavLinkMatch.All">
+                     Корзина
+                </NavLink>
+            </div>
+            <div class="nav-item px-3">
+                <NavLink class="nav-link" href="IndexClient" Match="NavLinkMatch.All">
+                     Мои заказы
+                </NavLink>
+            </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="ServiceInfo" Match="NavLinkMatch.All">
+                         Наши услуги
+                    </NavLink>
+                </div>
+            </Authorized>
+        </AuthorizeView>
+        <AuthorizeView Roles="Employee">
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="IndexEmployee" Match="NavLinkMatch.All">
+                         Ордеры
+                    </NavLink>
+                </div>
+            </Authorized>
+        </AuthorizeView>
+        <AuthorizeView Roles="Admin">
+            <Authorized>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="Employees" Match="NavLinkMatch.All">
+                         Сотрудники
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="Export" Match="NavLinkMatch.All">
+                         Экспорт в Excel
+                    </NavLink>
+                </div>
+                <div class="nav-item px-3">
+                    <NavLink class="nav-link" href="Import" Match="NavLinkMatch.All">
+                         Импорт в Excel
+                    </NavLink>
+                </div>
+            </Authorized>
+        </AuthorizeView>
+        <AuthorizeView>
+            <Authorized>
+                <div class="nav-item px-3">
+                    <form action="Account/Logout" method="post">
+                        <AntiforgeryToken />
+                        <input type="hidden" name="ReturnUrl" value="@currentUrl" />
+                        <button type="submit" class="nav-link">
+                             Выйти из аккаунта
+                        </button>
+                    </form>
+                </div>
+            </Authorized>
+        </AuthorizeView>
+
+    </nav>
+</div>
+
+@code {
+    private string? currentUrl;
+
+    protected override void OnInitialized()
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(NavigationManager.Uri);
+        NavigationManager.LocationChanged += OnLocationChanged;
+    }
+
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
+    {
+        currentUrl = NavigationManager.ToBaseRelativePath(e.Location);
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        NavigationManager.LocationChanged -= OnLocationChanged;
+    }
+}
+

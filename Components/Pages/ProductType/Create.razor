@@ -1,0 +1,65 @@
+﻿@page "/productType/Create"
+@inject NavigationManager Navigation
+@using Microsoft.AspNetCore.Components.Forms
+@using NikePro.Data
+@using NikePro.Interfaces.ProductTypeInterfaces
+@using NikePro.Services
+@using NikePro.Services.ProducytTypeServices
+@inject IProductTypeService ProductTypeService
+@rendermode InteractiveServer
+<h1>Добавить категорию</h1>
+
+
+    <div>
+        <label for="name">Название категории:</label>
+        <input type="text" id="name" @bind="newCategory.Name" required />
+    </div>
+
+    <div>
+        <label for="image">Загрузить изображение:</label>
+        <InputFile id="image" OnChange="HandleFileSelected" />
+    </div>
+
+<button @onclick="HandleValidSubmit">Добавить категорию</button>
+
+
+@if (!string.IsNullOrEmpty(uploadMessage))
+{
+    <p>@uploadMessage</p>
+}
+<a href="/productType/AdminIndex">Назад</a>
+@code {
+    private ProductType newCategory = new ProductType();
+    private IBrowserFile selectedImage;
+    private string uploadMessage;
+
+    private async Task HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        selectedImage = e.GetMultipleFiles(1).FirstOrDefault();
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        if (selectedImage != null)
+        {
+            var filePath = Path.Combine("wwwroot", "Images", selectedImage.Name);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await selectedImage.OpenReadStream(maxAllowedSize: 1024 * 1024 * 5).CopyToAsync(stream); // Ограничение на размер файла 5 МБ
+            }
+
+            newCategory.ProductTypeImagesURL = $"/Images/{selectedImage.Name}"; // Путь к изображению
+
+            // Сохранение новой категории в базе данных
+            await ProductTypeService.AddProductTypeAsync(newCategory);
+
+            uploadMessage = "Категория успешно добавлена!";
+            newCategory = new ProductType(); // Очистка формы
+            Navigation.NavigateTo("/productType/AdminIndex");
+        }
+        else
+        {
+            uploadMessage = "Пожалуйста, выберите изображение.";
+        }
+    }
+}

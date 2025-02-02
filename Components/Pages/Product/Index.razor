@@ -1,0 +1,64 @@
+﻿@page "/Product"
+@inject NavigationManager NavigationManager
+@inject IProductService ProductService
+@rendermode InteractiveServer 
+@using Microsoft.EntityFrameworkCore
+@using NikePro.Interfaces.ProductInterfaces
+@using NikePro.Data
+<head>
+    <link href="css/ProductIndex.css" rel="stylesheet" />
+</head>
+
+        <div class="container">
+            
+            <h2>Товары</h2>
+
+            @if (products == null)
+            {
+                <p>Загрузка...</p>
+            }
+            else
+            {
+                <AuthorizeView Roles="Admin">
+                    <button @onclick="NavigateToAdminProduct">Редакторировать</button>
+                </AuthorizeView>
+
+                <div class="row">
+                    @foreach (var product in products)
+                    {
+                        <div class="col-sm-6 col-md-4 col-lg-3 mb-3 mt-3">
+                            <div class="card h-100 card-container" style="width: 100%; border-radius: 20px">
+                                <img src="@product.ImagesUrl" class="card-img-top" style="object-fit: cover; width: 80%; margin: 0 auto; align-content: center;" />
+                                <div class="card-body">
+                                    <h5 class="card-title">@product.Name</h5>
+                                    <p class="card-text"><strong>@product.Price руб.</strong></p>
+                                    <p class="card-text">@product.Description</p>
+                                    <button class="" @onclick=@(()=>NavigateToProduct(product.ProductId)) >
+                                        Перейти
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+    <a href="/">Возврат к списку категорий</a>
+        </div>
+@code {
+    [SupplyParameterFromQuery]
+    public int typeId { get; set; }
+
+    public List<Product>? products;
+
+    protected override async Task OnInitializedAsync() => products = await ProductService.GetProductListByCategoriesAsync(typeId);
+
+    public void NavigateToAdminProduct()
+    {
+        NavigationManager.NavigateTo("Product/AdminProduct?typeId="+typeId.ToString());
+    }
+    public void NavigateToProduct(int productId)
+    {
+        NavigationManager.NavigateTo("Product/Details?productId=" + productId.ToString());
+    }
+}
+

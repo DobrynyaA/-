@@ -1,0 +1,86 @@
+﻿@page "/productType/Edit"
+@using NikePro.Data
+@using NikePro.Interfaces.ProductTypeInterfaces
+@inject NavigationManager NavigationManager
+@inject IProductTypeService ProductTypeService
+@rendermode InteractiveServer
+
+<PageTitle>Редактирование категории</PageTitle>
+
+<h1>Редактирование категории</h1>
+<hr/>
+@if (type is null)
+{
+    <p><em>Загрузка страницы...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm Model="type" OnValidSubmit="UpdateType" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <input type="hidden" name="type.Id" value="@type.Id" />
+                
+                <div class="mb-3">
+                    <label for="Name" class="form-label">Название категории:</label>
+                    <InputText id="Name" @bind-Value="type.Name" class="form-control" />
+                    <ValidationMessage For="() => type.Name" class="text-danger" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="imageUpload" class="form-label">Изменить фотографию:</label>
+                    <InputFile id="imageUpload" OnChange="HandleFileSelected" />
+                    <ValidationMessage For="() => type.ProductTypeImagesURL" class="text-danger" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+            </EditForm>
+        </div>
+    </div>
+}
+<a href="/productType/AdminIndex">Назад</a>
+@code {
+    [SupplyParameterFromQuery]
+    public int typeId { get; set; }
+
+    [SupplyParameterFromForm]
+    public ProductType? type { get; set; }
+    private IBrowserFile? selectedImage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        type ??= await ProductTypeService.GetProductTypeByIdAsync(typeId);
+
+        if (type is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    public async Task UpdateType()
+    {
+        if (type is not null)
+        {
+            if (selectedImage != null)
+            {
+                // Сохранение загруженного изображения
+                var filePath = Path.Combine("wwwroot", "images", selectedImage.Name);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await selectedImage.OpenReadStream(maxAllowedSize: 1024 * 1024 * 5).CopyToAsync(stream); // Ограничение на размер файла 5 МБ
+                }
+                
+                type.ProductTypeImagesURL = $"/images/{selectedImage.Name}"; // Обновляем путь к изображению в модели
+            }
+
+            await ProductTypeService.EditProductTypeAsync(type);
+            NavigationManager.NavigateTo("/productType/AdminIndex"); // Перенаправление после успешного редактирования
+        }
+    }
+
+    private void HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        selectedImage = e.GetMultipleFiles(1).FirstOrDefault(); // Получаем выбранное изображение
+    }
+}

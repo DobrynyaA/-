@@ -1,0 +1,68 @@
+﻿@page "/Employees/Delete"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
+@using NikePro.Interfaces.ProductInterfaces
+@using NikePro.Interfaces
+@using NikePro.Data
+@using Microsoft.AspNetCore.Components.QuickGrid
+@inject IEmployeeService EmployeeService
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject ApplicationDbContext dbContext
+
+<PageTitle>Удалить сотрудника</PageTitle>
+
+<h1>Удалить сотрудника</h1>
+
+<h3>Вы уверены, что хотите удалить?</h3>
+<div>
+    <hr />
+    @if (User is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <dl class="row">
+            <dt class="col-sm-2">Фамилия сотрудника</dt>
+            <dd class="col-sm-10">@User.Surname</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Имя сотрудника</dt>
+            <dd class="col-sm-10">@User.Name</dd>
+        </dl>
+        <dl class="row">
+            <dt class="col-sm-2">Отчество сотрудника</dt>
+            <dd class="col-sm-10">@User.Patronymic</dd>
+        </dl>
+        <EditForm method="post" Model="User" OnValidSubmit="DeleteEmployee" FormName="delete" Enhance>
+            <button type="submit" class="btn btn-danger" disabled="@(User is null)">Удалить</button> |
+            <a href="/Employees">Возврат к списку классов</a>
+        </EditForm>
+    }
+</div>
+
+@code {
+    ApplicationUser? User;
+
+    [SupplyParameterFromQuery]
+    public string userId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        User = await dbContext.Users.FirstOrDefaultAsync(m => m.Id == userId);
+
+        if (User is null)
+        {
+            Navigation.NavigateTo("notfound");
+        }
+    }
+    public async Task DeleteEmployee()
+    {
+        var employee = await dbContext.Employees.FirstOrDefaultAsync(e=>e.UserId == userId);
+        await EmployeeService.DeleteEmployee(employee);
+
+        Navigation.NavigateTo("/Employees");
+    }
+}

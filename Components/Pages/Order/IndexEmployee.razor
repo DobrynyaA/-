@@ -1,0 +1,39 @@
+﻿@page "/IndexEmployee"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
+@using NikePro.Interfaces.ProductInterfaces
+@using NikePro.Interfaces
+@using NikePro.Data
+@inject IProductService ProductService
+@inject ICartService CartService
+@inject ICartItemService CartItemService
+@inject IOrderService OrderService
+@inject IClientService ClientService
+@using Microsoft.AspNetCore.Components.QuickGrid
+@inject UserManager<ApplicationUser> UserManager
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+<h3>IndexEmployee</h3>
+@if (orders != null)
+{
+    <QuickGrid Class="table" Sortable="true" Items="orders">
+        <PropertyColumn Title="Номер ордера" Property="p => p.OrderId"/>
+        <PropertyColumn Title="Фамилия заказчика" Property="p => p.Client.User.Surname" />
+        <PropertyColumn Title="Имя заказчика" Property="p => p.Client.User.Name" />
+        <PropertyColumn Title="Отчество заказчика" Property="p => p.Client.User.Patronymic" />
+        <PropertyColumn Title="Дата создания" Property="p => p.OrderDate"/>
+        <PropertyColumn Title="Количество товаров" Property="p => p.OrderItems.Count()"/>
+        <TemplateColumn Context="order">
+            <a href="@($"Order/Details?orderId={order.OrderId}")">Просмотр/редактировать</a>
+        </TemplateColumn>
+    </QuickGrid>
+}
+@code {
+    private IQueryable<Order>? orders { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        var orderss = await OrderService.GetOrdersPending();
+        orders = orderss.AsQueryable();
+    }
+}

@@ -1,0 +1,149 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\obj\\Debug\\net8.0\\scopedcss\\projectbundle\\NikePro.bundle.scp.css",
+      "PackagePath": "staticwebassets\\NikePro.bundle.scp.css"
+    },
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\wwwroot\\Images\\Clothes.jpg",
+      "PackagePath": "staticwebassets\\Images\\Clothes.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\wwwroot\\Images\\ExerciseEquipment.jpg",
+      "PackagePath": "staticwebassets\\Images\\ExerciseEquipment.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\wwwroot\\Images\\Krestiksvgpng.ru_.svg",
+      "PackagePath": "staticwebassets\\Images\\Krestiksvgpng.ru_.svg"
+    },
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\wwwroot\\Images\\Nike Air Force 1 Low.jpg",
+      "PackagePath": "staticwebassets\\Images\\Nike Air Force 1 Low.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\wwwroot\\Images\\Nike Air Jordan 1 Mid.jpg",
+      "PackagePath": "staticwebassets\\Images\\Nike Air Jordan 1 Mid.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\wwwroot\\Images\\Nike Air Max 90 Futura.jpg",
+      "PackagePath": "staticwebassets\\Images\\Nike Air Max 90 Futura.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\wwwroot\\Images\\Nike Air Monarch IV.jpg",
+      "PackagePath": "staticwebassets\\Images\\Nike Air Monarch IV.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\wwwroot\\Images\\NikePro.png",
+      "PackagePath": "staticwebassets\\Images\\NikePro.png"
+    },
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\wwwroot\\Images\\Protein.jpg",
+      "PackagePath": "staticwebassets\\Images\\Protein.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\wwwroot\\Images\\SportInventory.jpg",
+      "PackagePath": "staticwebassets\\Images\\SportInventory.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\wwwroot\\Images\\icons8-минус-48.png",
+      "PackagePath": "staticwebassets\\Images\\icons8-минус-48.png"
+    },
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\wwwroot\\Images\\icons8-плюс-48.png",
+      "PackagePath": "staticwebassets\\Images\\icons8-плюс-48.png"
+    },
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\wwwroot\\Images\\icons8-плюс.svg",
+      "PackagePath": "staticwebassets\\Images\\icons8-плюс.svg"
+    },
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\wwwroot\\Images\\minus-line-svgrepo-com.svg",
+      "PackagePath": "staticwebassets\\Images\\minus-line-svgrepo-com.svg"
+    },
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\wwwroot\\Images\\scale_1200.jpg",
+      "PackagePath": "staticwebassets\\Images\\scale_1200.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\wwwroot\\Images\\sneackers.jpg",
+      "PackagePath": "staticwebassets\\Images\\sneackers.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\wwwroot\\Images\\thumbnail_350x196.jpg",
+      "PackagePath": "staticwebassets\\Images\\thumbnail_350x196.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\wwwroot\\Images\\Зимние форсы.jpg",
+      "PackagePath": "staticwebassets\\Images\\Зимние форсы.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\wwwroot\\Images\\Снимок экрана 2024-12-02 174511.png",
+      "PackagePath": "staticwebassets\\Images\\Снимок экрана 2024-12-02 174511.png"
+    },
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\wwwroot\\Images\\Снимок экрана 2024-12-10 172017.png",
+      "PackagePath": "staticwebassets\\Images\\Снимок экрана 2024-12-10 172017.png"
+    },
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\wwwroot\\Images\\форсы.jpg",
+      "PackagePath": "staticwebassets\\Images\\форсы.jpg"
+    },
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\wwwroot\\app.css",
+      "PackagePath": "staticwebassets\\app.css"
+    },
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\wwwroot\\bootstrap\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css"
+    },
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\wwwroot\\bootstrap\\bootstrap.min.css.map",
+      "PackagePath": "staticwebassets\\bootstrap\\bootstrap.min.css.map"
+    },
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\wwwroot\\css\\Cart.css",
+      "PackagePath": "staticwebassets\\css\\Cart.css"
+    },
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\wwwroot\\css\\OrderClient.css",
+      "PackagePath": "staticwebassets\\css\\OrderClient.css"
+    },
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\wwwroot\\css\\OrderDetails.css",
+      "PackagePath": "staticwebassets\\css\\OrderDetails.css"
+    },
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\wwwroot\\css\\ProductIndex.css",
+      "PackagePath": "staticwebassets\\css\\ProductIndex.css"
+    },
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\wwwroot\\css\\Service.css",
+      "PackagePath": "staticwebassets\\css\\Service.css"
+    },
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\wwwroot\\favicon.png",
+      "PackagePath": "staticwebassets\\favicon.png"
+    },
+    {
+      "Id": "C:\\Users\\Dobrynya\\Desktop\\учеба\\7 семестр\\Современные языки программирования\\NikePro\\NikePro\\wwwroot\\js\\openfile.js",
+      "PackagePath": "staticwebassets\\js\\openfile.js"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.NikePro.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.NikePro.props",
+      "PackagePath": "build\\NikePro.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.NikePro.props",
+      "PackagePath": "buildMultiTargeting\\NikePro.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.NikePro.props",
+      "PackagePath": "buildTransitive\\NikePro.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

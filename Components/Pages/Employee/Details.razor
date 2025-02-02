@@ -1,0 +1,54 @@
+﻿@page "/Employees/Details"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
+@using NikePro.Interfaces.ProductInterfaces
+@using NikePro.Interfaces
+@using NikePro.Data
+@using Microsoft.AspNetCore.Components.QuickGrid
+@inject IEmployeeService EmployeeService
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject ApplicationDbContext dbContext
+
+@if(User is null)
+{
+    <a>Загрузка...</a>
+}
+else
+{
+    <dl class="row">
+        <dt class="col-sm-2">Имя</dt>
+        <dd class="col-sm-10">@User.Name</dd>
+        <dt class="col-sm-2">Фамилия</dt>
+        <dd class="col-sm-10">@User.Surname</dd>
+        <dt class="col-sm-2">Отчество</dt>
+        <dd class="col-sm-10">@User.Patronymic</dd>
+        <dt class="col-sm-2">Должность</dt>
+        <dd class="col-sm-10">@User.BirthdayDate</dd>
+        <dt class="col-sm-2">Отдел</dt>
+        <dd class="col-sm-10">@User.Phone</dd>
+
+    </dl>
+    <div>
+        <a href="@($"/Employees/Edit?userId={userId}")">Редактирование</a> |
+        <a href="@($"/Employees")">Возврат к списку сотрудников</a>
+    </div>
+}
+
+@code {
+    ApplicationUser? User;
+
+    [SupplyParameterFromQuery]
+    public string userId { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        User = await dbContext.Users.FirstOrDefaultAsync(m => m.Id == userId);
+
+        if (User is null)
+        {
+            Navigation.NavigateTo("notfound");
+        }
+    }
+}

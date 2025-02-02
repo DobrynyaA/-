@@ -1,0 +1,84 @@
+﻿@page "/Product/Details"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
+@using NikePro.Interfaces.ProductInterfaces
+@using NikePro.Interfaces
+@using NikePro.Data
+@inject IProductService ProductService
+@inject ICartService CartService
+@inject UserManager<ApplicationUser> UserManager
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+@if (product is not null)
+{
+    <h3>@product.Name</h3>
+}
+
+<div>
+    <hr />
+    @if (product is null)
+    {
+        <p><em>Загрузка страницы...</em></p>
+    }
+    else
+    {
+        <dl class="row">
+            <dt class="col-sm-2">Название товара</dt>
+            <dd class="col-sm-10">@product.Name</dd>
+            <dt class="col-sm-2">Оптисание товара</dt>
+            <dd class="col-sm-10">@product.Description</dd>
+            <dt class="col-sm-2">Цена:</dt>
+            <dd class="col-sm-10">@product.Price</dd>
+            <dt class="col-sm-2">Изображение</dt>
+            <dd class="productType-image-details"><img src="@product.ImagesUrl" /></dd>
+        </dl>
+        <AuthorizeView Roles="Client">
+            <div>
+                <button @onclick=AddInCartAsync>Добавть в корзину</button>
+            </div>
+        </AuthorizeView>
+        
+        <div>
+            <a href="@($"product/Edit?productId={productId}")">Редактировать</a>
+            <a href="@($"/Product?typeId={product.ProductTypeId}")">Возврат к списку товаров</a>
+        </div>
+    }
+</div>
+@code {
+    Product? product;
+
+    [SupplyParameterFromQuery]
+    public int productId { get; set; }
+
+    public string currentUserId { get; set; }
+
+    public Cart? cart { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        product = await ProductService.GetProductByIdAsync(productId);
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            currentUserId = UserManager.GetUserId(user);
+        }
+    }
+    public async Task AddInCartAsync()
+    {
+        cart = await CartService.GetCartByUserId(currentUserId);
+        var item = new CartItem
+        {
+            CartId = cart.CartId,
+            ProductId = product.ProductId,
+            Quantity = 1,
+            PriceAtAddTime = product.Price
+        };
+        cart.Items.Add(item);
+        await CartService.EditCart(cart);
+        Navigation.NavigateTo("/Product?typeId=" + product.ProductTypeId);
+    }
+}

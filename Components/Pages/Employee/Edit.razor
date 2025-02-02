@@ -1,0 +1,106 @@
+﻿@page "/Employees/Edit"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
+@using NikePro.Interfaces.ProductInterfaces
+@using NikePro.Interfaces
+@using NikePro.Data
+@using Microsoft.AspNetCore.Components.QuickGrid
+@inject IEmployeeService EmployeeService
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject ApplicationDbContext dbContext
+
+<PageTitle>Редактирование работника</PageTitle>
+
+<h1>Редактирование сотрудника</h1>
+
+<hr />
+@if (User is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <hr />
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="User" OnValidSubmit="UpdateEmployee" FormName="Create" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger" />
+                <div class="mb-3">
+                    <label for="userrname" class="form-label">Имя сотрудника:</label>
+                    <InputText id="username" @bind-Value="User.Name" class="form-control" />
+                    <ValidationMessage For="() => User.Name" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="workersurname" class="form-label">Фамилия сотрудника:</label>
+                    <InputText id="workersurname" @bind-Value="User.Surname" class="form-control" />
+                    <ValidationMessage For="() => User.Surname" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="workerpatronymic" class="form-label">Отчество сотрудника:</label>
+                    <InputText id="workerpatronymic" @bind-Value="User.Patronymic" class="form-control" />
+                    <ValidationMessage For="() => User.Patronymic" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="birthday" class="form-label">Дата рождения:</label>
+                    <InputDate id="birthday" @bind-Value="User.BirthdayDate" class="form-control" />
+                    <ValidationMessage For="() => User.BirthdayDate" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="workerblock" class="form-label">Телефон:</label>
+                    <InputText id="workerblock" @bind-Value="User.Phone" class="form-control" />
+                    <ValidationMessage For="() => User.Phone" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Сохрнаить</button>
+            </EditForm>
+        </div>
+    </div>
+
+    <div>
+        <a href="/Employees">Назад к списку сотрудников</a>
+    </div>
+}
+
+@code {
+    [SupplyParameterFromQuery]
+    public string userId { get; set; }
+
+    [SupplyParameterFromForm]
+    public ApplicationUser? User { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        User = await dbContext.Users.FirstOrDefaultAsync(u => u.Id == userId);
+        if (User is null)
+        {
+            Navigation.NavigateTo("notfound");
+        }
+    }
+    public async Task UpdateEmployee()
+    {
+        dbContext.Attach(User!).State = EntityState.Modified;
+
+
+        try
+        {
+            await dbContext.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!WorkerExists(User!.Id))
+            {
+                Navigation.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+        Navigation.NavigateTo("/Employees");
+    }
+    bool WorkerExists(string id)
+    {
+        return dbContext.Users.Any(e => e.Id == id);
+    }
+}

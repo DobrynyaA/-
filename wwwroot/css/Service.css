@@ -1,0 +1,95 @@
+﻿body {
+    background-color: #5a2f83;
+}
+
+/* Заголовок */
+h3 {
+    text-align: center;
+    font-size: 26px;
+    margin-bottom: 20px;
+    color: #333;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Сообщение об ошибке */
+a {
+    display: block;
+    text-align: center;
+    font-size: 18px;
+    color: #d9534f;
+    text-decoration: none;
+    margin: 10px auto;
+}
+
+    a:hover {
+        text-decoration: underline;
+    }
+
+/* Контейнер для списка услуг */
+.ServiceList {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+    /* Стили для отдельной услуги */
+    .ServiceList a {
+        display: block;
+        padding: 12px 20px;
+        background-color: #007bff;
+        color: #fff;
+        border-radius: 6px;
+        text-decoration: none;
+        font-size: 16px;
+        text-align: center;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+        .ServiceList a:hover {
+            background-color: #0056b3;
+            transform: translateY(-3px);
+        }
+
+/* Информационный блок */
+.info {
+    margin-top: 30px;
+    padding: 15px;
+    background-color: #f9f9f9;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    text-align: center;
+    font-size: 14px;
+    color: #555;
+    line-height: 1.8;
+}
+
+    .info a {
+        font-weight: bold;
+        color: #333;
+        text-decoration: none;
+    }
+
+        .info a:hover {
+            text-decoration: underline;
+            color: #007bff;
+        }
+
+/* Адаптивный дизайн */
+@media (max-width: 768px) {
+    .ServiceList a {
+        width: 80%;
+        padding: 10px;
+    }
+
+    .info {
+        font-size: 13px;
+    }
+}

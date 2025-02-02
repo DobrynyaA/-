@@ -1,0 +1,247 @@
+﻿@page "/Export"
+@attribute [Authorize(Roles = "Admin")]
+@rendermode InteractiveServer
+@using ClosedXML.Excel
+@using NikePro.Data
+@inject IDbContextFactory<NikePro.Data.ApplicationDbContext> DbFactory
+ @implements IAsyncDisposable
+ @inject IJSRuntime js
+
+<button type="button" class="btn btn-success mb-2" @onclick="@ExportXLSWorkers">Экспорт всех таблиц в Excel</button>
+
+@code {
+    ApplicationDbContext context = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+    public async Task ExportXLSWorkers()
+    {
+        var XLSStream = ExportXLSRezult();
+
+        await js.InvokeVoidAsync("BlazorDownloadFile", "NikePro.xlsx", XLSStream);
+    }
+    private byte[] ExportXLSRezult()
+    {
+        using var workbook = new XLWorkbook();
+
+        var worksheet1 = workbook.Worksheets.Add("ApplicationUser");
+        worksheet1.Cell(1, 1).Value = "Id";
+        worksheet1.Cell(1, 2).Value = "Name";
+        worksheet1.Cell(1, 3).Value = "Surname";
+        worksheet1.Cell(1, 4).Value = "Patronymic";
+        worksheet1.Cell(1, 5).Value = "BirthdayDate";
+        worksheet1.Cell(1, 6).Value = "Phone";
+
+
+        worksheet1.Row(1).Style.Font.Bold = true;
+
+        int i=2;
+
+        foreach(var rez in context.Users){
+            worksheet1.Cell(i, 1).Value = rez.Id;
+            worksheet1.Cell(i, 2).Value = rez.Name;
+            worksheet1.Cell(i, 3).Value = rez.Surname;
+            worksheet1.Cell(i, 4).Value = rez.Patronymic;
+            worksheet1.Cell(i, 5).Value = rez.BirthdayDate;
+            worksheet1.Cell(i, 6).Value = rez.Phone;  
+            i++;
+        }
+
+        var worksheet2 = workbook.Worksheets.Add("Product");
+        worksheet2.Cell(1, 1).Value = "ProductId";
+        worksheet2.Cell(1, 2).Value = "Name";
+        worksheet2.Cell(1, 3).Value = "ProductTypeId";
+        worksheet2.Cell(1, 4).Value = "ImagesUrl";
+        worksheet2.Cell(1, 5).Value = "Price";
+        worksheet2.Cell(1, 6).Value = "Description";
+
+
+        worksheet1.Row(1).Style.Font.Bold = true;
+
+        i = 2;
+
+        foreach (var rez in context.Products)
+        {
+            worksheet2.Cell(i, 1).Value = rez.ProductId;
+            worksheet2.Cell(i, 2).Value = rez.Name;
+            worksheet2.Cell(i, 3).Value = rez.ProductTypeId;
+            worksheet2.Cell(i, 4).Value = rez.ImagesUrl;
+            worksheet2.Cell(i, 5).Value = rez.Price;
+            worksheet2.Cell(i, 6).Value = rez.Description;
+            i++;
+        }
+
+        var worksheet3 = workbook.Worksheets.Add("Cart");
+        worksheet3.Cell(1, 1).Value = "ProductId";
+        worksheet3.Cell(1, 2).Value = "Name";
+
+        worksheet3.Row(1).Style.Font.Bold = true;
+
+        i = 2;
+
+        foreach (var rez in context.Carts)
+        {
+            worksheet3.Cell(i, 1).Value = rez.CartId;
+            worksheet3.Cell(i, 2).Value = rez.Clientid;
+            i++;
+        }
+
+        var worksheet4 = workbook.Worksheets.Add("CartItem");
+        worksheet4.Cell(1, 1).Value = "CartItemId";
+        worksheet4.Cell(1, 2).Value = "CartId";
+        worksheet4.Cell(1, 3).Value = "ProductId";
+        worksheet4.Cell(1, 4).Value = "Quantity";
+        worksheet4.Cell(1, 5).Value = "PriceAtAddTime";
+
+        worksheet4.Row(1).Style.Font.Bold = true;
+
+        i = 2;
+
+        foreach (var rez in context.CartItems)
+        {
+            worksheet4.Cell(i, 1).Value = rez.CartItemId;
+            worksheet4.Cell(i, 2).Value = rez.CartId;
+            worksheet4.Cell(i, 3).Value = rez.ProductId;
+            worksheet4.Cell(i, 4).Value = rez.Quantity;
+            worksheet4.Cell(i, 5).Value = rez.PriceAtAddTime;
+            i++;
+        }
+
+        var worksheet5 = workbook.Worksheets.Add("Client");
+        worksheet5.Cell(1, 1).Value = "ClientId";
+        worksheet5.Cell(1, 2).Value = "UserId";
+
+        worksheet5.Row(1).Style.Font.Bold = true;
+
+        i = 2;
+
+        foreach (var rez in context.Clients)
+        {
+            worksheet5.Cell(i, 1).Value = rez.ClientId;
+            worksheet5.Cell(i, 2).Value = rez.UserId;
+            i++;
+        }
+
+        var worksheet6 = workbook.Worksheets.Add("Employee");
+        worksheet6.Cell(1, 1).Value = "EmployeeId";
+        worksheet6.Cell(1, 2).Value = "UserId";
+
+        worksheet6.Row(1).Style.Font.Bold = true;
+
+        i = 2;
+
+        foreach (var rez in context.Employees)
+        {
+            worksheet6.Cell(i, 1).Value = rez.EmployeeId;
+            worksheet6.Cell(i, 2).Value = rez.UserId;
+            i++;
+        }
+
+        var worksheet7 = workbook.Worksheets.Add("Order");
+        worksheet7.Cell(1, 1).Value = "CartId";
+        worksheet7.Cell(1, 2).Value = "ClientId";
+        worksheet7.Cell(1, 3).Value = "OrderDate";
+        worksheet7.Cell(1, 4).Value = "OrderDateEnd";
+        worksheet7.Cell(1, 5).Value = "OrderStatusId";
+        worksheet7.Cell(1, 6).Value = "EmployeeId";
+        worksheet7.Cell(1, 7).Value = "TotalAmount";
+        worksheet7.Cell(1, 8).Value = "OrderId";
+
+
+        worksheet7.Row(1).Style.Font.Bold = true;
+
+        i = 2;
+
+        foreach (var rez in context.Orders)
+        {
+            worksheet7.Cell(i, 1).Value = rez.CartId;
+            worksheet7.Cell(i, 2).Value = rez.ClientId;
+            worksheet7.Cell(i, 3).Value = rez.OrderDate;
+            worksheet7.Cell(i, 4).Value = rez.OrderDateEnd;
+            worksheet7.Cell(i, 5).Value = rez.OrderStatusId;
+            worksheet7.Cell(i, 6).Value = rez.EmployeeId;
+            worksheet7.Cell(i, 7).Value = rez.TotalAmount;
+            worksheet7.Cell(i, 8).Value = rez.OrderId;
+            i++;
+        }
+
+        var worksheet8 = workbook.Worksheets.Add("OrderItems");
+        worksheet8.Cell(1, 1).Value = "OrderItemId";
+        worksheet8.Cell(1, 2).Value = "OrderId";
+        worksheet8.Cell(1, 3).Value = "ProductId";
+        worksheet8.Cell(1, 4).Value = "ServiceId";
+        worksheet8.Cell(1, 5).Value = "Quantity";
+        worksheet8.Cell(1, 6).Value = "Price";
+
+        worksheet8.Row(1).Style.Font.Bold = true;
+
+        i = 2;
+
+        foreach (var rez in context.OrderItems)
+        {
+            worksheet8.Cell(i, 1).Value = rez.OrderItemId;
+            worksheet8.Cell(i, 2).Value = rez.OrderId;
+            worksheet8.Cell(i, 3).Value = rez.ProductId;
+            worksheet8.Cell(i, 4).Value = rez.ServiceId;
+            worksheet8.Cell(i, 5).Value = rez.Quantity;
+            worksheet8.Cell(i, 6).Value = rez.Price;
+            i++;
+        }
+
+        var worksheet9 = workbook.Worksheets.Add("OrderStatus");
+        worksheet9.Cell(1, 1).Value = "OrderStatusId";
+        worksheet9.Cell(1, 2).Value = "Name";
+
+        worksheet9.Row(1).Style.Font.Bold = true;
+
+        i = 2;
+
+        foreach (var rez in context.OrderStatuses)
+        {
+            worksheet9.Cell(i, 1).Value = rez.OrderStatusId;
+            worksheet9.Cell(i, 2).Value = rez.Name;
+            i++;
+        }
+
+        var worksheet10 = workbook.Worksheets.Add("ProductType");
+        worksheet10.Cell(1, 1).Value = "Id";
+        worksheet10.Cell(1, 2).Value = "Name";
+        worksheet10.Cell(1, 3).Value = "ProductTypeImagesURL";
+
+        worksheet10.Row(1).Style.Font.Bold = true;
+
+        i = 2;
+
+        foreach (var rez in context.ProductTypes)
+        {
+            worksheet10.Cell(i, 1).Value = rez.Id;
+            worksheet10.Cell(i, 2).Value = rez.Name;
+            worksheet10.Cell(i, 3).Value = rez.ProductTypeImagesURL;
+            i++;
+        }
+
+        var worksheet11 = workbook.Worksheets.Add("Service");
+        worksheet11.Cell(1, 1).Value = "ServiceId";
+        worksheet11.Cell(1, 2).Value = "ServiceName";
+
+        worksheet11.Row(1).Style.Font.Bold = true;
+
+        i = 2;
+
+        foreach (var rez in context.Services)
+        {
+            worksheet11.Cell(i, 1).Value = rez.ServiceId;
+            worksheet11.Cell(i, 2).Value = rez.ServiceName;
+            i++;
+        }
+
+        MemoryStream XLSStream = new();
+        workbook.SaveAs(XLSStream);
+
+       return XLSStream.ToArray();
+     
+    }
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}

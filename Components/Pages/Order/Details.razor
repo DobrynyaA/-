@@ -1,0 +1,77 @@
+﻿@page "/Order/Details"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
+@using NikePro.Interfaces.ProductInterfaces
+@using NikePro.Interfaces
+@using NikePro.Data
+@inject IProductService ProductService
+@inject ICartService CartService
+@inject ICartItemService CartItemService
+@inject IOrderService OrderService
+@inject IClientService ClientService
+@inject IOrderStatus OrderStatusService
+@inject UserManager<ApplicationUser> UserManager
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+<head>
+    <link href="css/OrderDetails.css" rel="stylesheet" />
+</head>
+@if (order is null)
+{
+    <p>Загрузка...</p>
+}
+else
+{
+     <div class="OrdersContainer">
+         <div class="title">
+             <div>Дата заказа</div>
+            <select @bind="selectedOption">
+                <option value="Собирается">Собирается</option>
+                <option value="Готов к выдаче">Готов к выдаче</option>
+                <option value="Выдан">Выдан</option>
+                <option value="Отклонён">Отклонён</option>
+            </select>
+         </div>
+         @foreach (var product in order.OrderItems)
+         {
+            <div class="bodyOrdersContainer">
+                <div class="image">
+                     <img src="@product.Product.ImagesUrl" />
+                </div>
+                <div class="Name">@product.Product.Name</div>
+                <div class="Count">@product.Quantity</div>
+            </div>
+         }
+         <button @onclick="@(()=>Save())">Сохранить изменения</button>
+     </div>
+}
+
+@code {
+    [SupplyParameterFromQuery]
+    private int orderId { get; set; }
+
+    private Order order { get; set; }
+
+    private string selectedOption { get; set; }
+
+    private OrderStatus orderStatus { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        order = await OrderService.GetOrderById(orderId);
+
+        selectedOption = order.OrderStatus.Name;
+    }
+    public async Task Save()
+    {
+        orderStatus = await OrderStatusService.GetOrderStatusByNameAsync(selectedOption);
+
+        order.OrderStatusId = orderStatus.OrderStatusId;
+
+        await OrderService.EditOrder(order);
+
+        Navigation.NavigateTo("/IndexEmployee");
+    }
+}

@@ -1,0 +1,36 @@
+﻿@page "/ServiceInfo"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
+@using NikePro.Interfaces.ProductInterfaces
+@using NikePro.Interfaces
+@using NikePro.Data
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject ApplicationDbContext context
+<head>
+    <link href="css/Service.css" rel="stylesheet" />
+</head>
+<h3>Наши услуги</h3>
+@if(Services is null || !Services.Any())
+{
+    <a>Ошибка загрузки данных</a>
+}
+else
+{
+    <div class="ServiceList">
+        @foreach (var service in Services)
+        {
+            <a>@service.ServiceName</a>
+        }
+    </div>
+    <div class="info">
+        <a>Все данные услуги предоставляются мастерами в наших магазинах. По всем вопросам звонить по номеру +7(952)8122121</a>
+    </div>
+}
+@code {
+    private List<Service> Services { get; set; }
+    protected override async Task OnInitializedAsync()
+    {
+        Services = context.Services.ToList();
+    }
+}

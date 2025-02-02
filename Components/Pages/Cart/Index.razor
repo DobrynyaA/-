@@ -1,0 +1,149 @@
+﻿@page "/Cart"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
+@using NikePro.Interfaces.ProductInterfaces
+@using NikePro.Interfaces
+@using NikePro.Data
+@inject IProductService ProductService
+@inject ICartService CartService
+@inject ICartItemService CartItemService
+@inject IOrderService OrderService
+@inject IClientService ClientService
+@inject UserManager<ApplicationUser> UserManager
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+<head>
+    <link href="css/Cart.css" rel="stylesheet" />
+</head>
+
+<div class="shopping-cart">
+    <!-- Title -->
+    <div class="title">
+        Корзина
+    </div>
+
+    @if (Cart == null)
+    {
+        <p>Загрузка...</p>
+    }
+    else if(!Cart.Items.Any())
+    {
+        <p>Кажется здесь пусто</p>
+        <a href="/ProductType">Перейти в каталог</a>
+    }
+    else
+    {
+        foreach(var item in Cart.Items)
+        {
+            <div class="item">
+                <button class="delete-btn" type="button" name="button" @onclick="@(() => DeleteProduct(item.ProductId))">
+                    <img src="\Images\Krestiksvgpng.ru_.svg" alt="" />
+                </button>
+
+                <div class="image">
+                    <img src="@item.Product.ImagesUrl" alt="" />
+                </div>
+
+                <div class="description">
+                    @item.Product.Name
+                </div>
+
+                <div class="quantity">
+                    <button class="minus-btn" type="button" name="button" @onclick="@(() => DecrementQuantity(item.CartItemId))">
+                        <img src="\Images\minus-line-svgrepo-com.svg" alt="" />
+                    </button>
+
+                    <input type="text" name="name" @bind=item.Quantity readonly>
+
+                    <button class="plus-btn" type="button" name="button" @onclick="@(() => IncrementQuantity(item.CartItemId))">
+                        <img src="\Images\icons8-плюс.svg" alt="" />
+                    </button>
+                </div>
+
+                <div class="total-price">@item.Product.Price ₽</div>
+            </div>
+        }
+        <div>Сумма заказа:@totalAmount</div>
+        <button class="orderButton" @onclick=DoOrder>Заказать</button>
+    }
+</div>
+@code {
+    public Cart? Cart { get; set; }
+
+    public string currentUserId { get; set; }
+
+    public List<Product>? products { get; set; }
+
+    public decimal totalAmount { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            currentUserId = UserManager.GetUserId(user);
+        }
+        Cart = await CartService.GetCartByUserId(currentUserId);
+
+        foreach(var product in Cart.Items)
+        {
+            totalAmount += product.Quantity * product.Product.Price;
+        }
+    }
+    public async void DoOrder()
+    {
+        var client = await ClientService.GetClientByUserId(currentUserId);
+        var newOrder = new Order
+        {
+            CartId = Cart.CartId,
+            ClientId = client.ClientId,
+            OrderStatusId = 1,
+            TotalAmount = totalAmount
+
+        };
+
+        foreach (var item in Cart.Items)
+        {
+            var orderItem = new OrderItem
+            {
+                OrderId = newOrder.OrderId,
+                ProductId = item.ProductId,
+                Quantity = item.Quantity,
+                Price = item.Product.Price * item.Quantity
+            };
+            newOrder.OrderItems.Add(orderItem);
+        }
+        await OrderService.CreateOrder(newOrder);
+        Cart.Items.Clear();
+        await CartItemService.DeleteAllCartItemInCart(Cart);
+        await CartService.EditCart(Cart);
+        StateHasChanged();
+    }
+    public async void IncrementQuantity(int id)
+    {
+        var cartItem = await CartItemService.GetCartItemById(id);
+        cartItem.Quantity++;
+        totalAmount += cartItem.Product.Price;
+        await CartItemService.EditCartitem(cartItem);
+        StateHasChanged();
+    }
+    public async void DecrementQuantity(int id)
+    {
+        var cartItem = await CartItemService.GetCartItemById(id);
+        if (cartItem.Quantity > 1)
+            cartItem.Quantity--;
+        totalAmount -= cartItem.Product.Price;
+        await CartItemService.EditCartitem(cartItem);
+        StateHasChanged();
+    }
+    public async Task DeleteProduct(int id)
+    {
+        var product = await ProductService.GetProductByIdAsync(id);
+        await CartService.DeleteProductFromCart(Cart, product);
+        StateHasChanged();
+        //Navigation.NavigateTo("Cart");
+    }
+}

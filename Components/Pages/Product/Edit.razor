@@ -1,0 +1,95 @@
+﻿@page "/Product/Edit"
+@using NikePro.Data
+@using NikePro.Interfaces.ProductInterfaces
+@inject NavigationManager NavigationManager
+@inject IProductService ProductService
+@rendermode InteractiveServer
+
+<PageTitle>Редактирование товара</PageTitle>
+
+<h1>Редактирование товара</h1>
+<hr />
+@if (product is null)
+{
+    <p><em>Загрузка страницы...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm Model="product" OnValidSubmit="UpdateProduct" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <input type="hidden" name="product.productId" value="@product.ProductId" />
+
+                <div class="mb-3">
+                    <label for="Name" class="form-label">Название товара:</label>
+                    <InputText id="Name" @bind-Value="product.Name" class="form-control" />
+                    <ValidationMessage For="() => product.Name" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="Description" class="form-label">Описание товара:</label>
+                    <InputText id="Description" @bind-Value="product.Description" class="form-control" />
+                    <ValidationMessage For="() => product.Description" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="Price" class="form-label">Цена:</label>
+                    <InputNumber id="Price" @bind-Value="product.Price" class="form-control" />
+                    <ValidationMessage For="() => product.Price" class="text-danger" />
+                </div>
+
+                <div class="mb-3">
+                    <label for="imageUpload" class="form-label">Изменить фотографию:</label>
+                    <InputFile id="imageUpload" OnChange="HandleFileSelected" />
+                    <ValidationMessage For="() => product.ImagesUrl" class="text-danger" />
+                </div>
+
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+            </EditForm>
+        </div>
+    </div>
+}
+@code {
+    [SupplyParameterFromQuery]
+    public int productId { get; set; }
+
+    [SupplyParameterFromForm]
+    public Product? product { get; set; }
+    private IBrowserFile? selectedImage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        product ??= await ProductService.GetProductByIdAsync(productId);
+
+        if (product is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    public async Task UpdateProduct()
+    {
+        if (product is not null)
+        {
+            if (selectedImage != null)
+            {
+                // Сохранение загруженного изображения
+                var filePath = Path.Combine("wwwroot", "images", selectedImage.Name);
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await selectedImage.OpenReadStream(maxAllowedSize: 1024 * 1024 * 5).CopyToAsync(stream); 
+                }
+
+                product.ImagesUrl = $"/images/{selectedImage.Name}";
+            }
+
+            await ProductService.EditProductAsync(product);
+            NavigationManager.NavigateTo("/Product/AdminIndex"); 
+        }
+    }
+
+    private void HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        selectedImage = e.GetMultipleFiles(1).FirstOrDefault();
+    }
+}

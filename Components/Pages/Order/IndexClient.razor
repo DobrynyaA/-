@@ -1,0 +1,75 @@
+﻿@page "/IndexClient"
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.AspNetCore.Identity
+@using NikePro.Interfaces.ProductInterfaces
+@using NikePro.Interfaces
+@using NikePro.Data
+@inject IProductService ProductService
+@inject ICartService CartService
+@inject ICartItemService CartItemService
+@inject IOrderService OrderService
+@inject IClientService ClientService
+@inject UserManager<ApplicationUser> UserManager
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject ApplicationDbContext context
+<head>
+    <link href="css/OrderClient.css" rel="stylesheet" />
+</head>
+<div class="MyOrders>">
+    @if (Orders is null)
+    {
+        <p>Загрузка...</p>
+    }
+    else if (!Orders.Any())
+    {
+        <p>Кажется здесь пусто</p>
+        <a href="/ProductType">Перейти в каталог</a>
+    }
+    else
+    {
+        @foreach(var order in Orders)
+        {
+                <div class="OrdersContainer">
+                    <div class="title">
+                        <div>@order.OrderDate</div>
+                        <div>@order.OrderStatus.Name</div>
+                    </div>
+                    @foreach (var product in order.OrderItems)
+                    {
+                        <div class="bodyOrdersContainer">
+                            <div class="image">
+                                <img src="@product.Product.ImagesUrl" />
+                            </div>
+                            <div class="Name">@product.Product.Name</div>
+                            <div class="Count">@product.Quantity шт.</div>
+                        </div>
+                    }
+                </div>
+        }
+    }
+</div>
+@code {
+    public List<Order>? Orders { get; set; }
+
+    public string currentUserId { get; set; }
+
+    public List<Product>? products { get; set; }
+
+    public decimal totalAmount { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            currentUserId = UserManager.GetUserId(user);
+        }
+        //Cart = await CartService.GetCartByUserId(currentUserId);
+        var Orderss = await OrderService.GetOrdersByUserId(currentUserId!);
+        Orders = Orderss.OrderByDescending(order => order.OrderDate).ToList();
+    }
+}

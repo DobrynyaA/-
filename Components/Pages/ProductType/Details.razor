@@ -1,0 +1,43 @@
+﻿@page "/productType/Details"
+@using NikePro.Interfaces.ProductTypeInterfaces
+@using NikePro.Data
+@inject IProductTypeService ProductTypeService
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@if(type is not null)
+{
+    <h3>@type.Name</h3>
+}
+
+<div>
+    <hr/>
+    @if(type is null)
+    {
+        <p><em>Загрузка страницы...</em></p>
+    }
+    else
+    {
+        <dl class="row">
+            <dt class="col-sm-2">Категория</dt>
+            <dd class="col-sm-10">@type.Name</dd>
+            <dt class="col-sm-2">Изображение</dt>
+            <dd class="productType-image-details"><img src="@type.ProductTypeImagesURL" /></dd>
+        </dl>
+        <div>
+            <a href="@($"productType/Edit?Id={type.Id}")">Редактировать</a>
+            <a href="@($"/productType/AdminIndex")">Возврат к списку классов</a>
+        </div>
+    }
+</div>
+<a href="/productType/AdminIndex">Назад</a>
+@code {
+    ProductType? type;
+
+    [SupplyParameterFromQuery]
+    public int Id{ get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        type = await ProductTypeService.GetProductTypeByIdAsync(Id);
+    }
+}

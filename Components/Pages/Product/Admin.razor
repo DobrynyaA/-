@@ -1,0 +1,75 @@
+﻿@page "/Product/AdminProduct"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using NikePro.Data
+@using NikePro.Interfaces.ProductInterfaces
+@inject IDbContextFactory<NikePro.Data.ApplicationDbContext> DbFactory
+@inject IProductService ProductService
+@implements IAsyncDisposable
+@rendermode InteractiveServer
+
+<PageTitle>Категории товаров</PageTitle>
+<h1>Категории товаров</h1>
+<p>
+    <a href="@($"Product/Create?typeId={typeId}")">Добавить новый товар</a>
+</p>
+@if(products != null)
+{
+    <QuickGrid Class="table" Sortable="true" Items="products">
+        <PropertyColumn Title="Название товара" Property="p => p.Name"/>
+
+        <TemplateColumn Context="product">
+            <a href="@($"Product/Edit?productId={product.ProductId}")">Редактировать</a>
+            <a href="@($"Product/Details?productId={product.ProductId}")">Просмотр</a>|
+            <button @onclick="@(() => OpenDeleteBox(product.ProductId))">Удалить</button>
+        </TemplateColumn>
+    </QuickGrid>
+}
+@if (isDeleteBoxVisable)
+{
+    <div id="popup-overlay">
+        <div id="popup">
+            <a>Удалить данный товар?</a>
+            <button class="Okbtn" @onclick=ConfirmDelete>Ок</button>
+            <button class="Closebtn" @onclick=CloseDeleteBox>Отмена</button>
+        </div>
+    </div>
+}
+<a href="/Product">Назад</a>
+@code {
+    [SupplyParameterFromQuery]
+    public int typeId { get; set;}
+
+    public IQueryable<Product>? products { get; set; }
+
+    public bool isDeleteBoxVisable = false;
+
+    public int productId { get; set; }
+
+    ApplicationDbContext context = default!;
+    protected override async Task OnInitializedAsync()
+    {
+        context = DbFactory.CreateDbContext();
+        var productList = await ProductService.GetProductListByCategoriesAsync(typeId);
+        products = productList.AsQueryable();
+    }
+    
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+
+    public void CloseDeleteBox()
+    {
+        isDeleteBoxVisable = false;
+    }
+    public void OpenDeleteBox(int id)
+    {
+        productId = id;
+        isDeleteBoxVisable = true;
+    }
+    public void ConfirmDelete()
+    {
+        if (productId != 0)
+            ProductService.DeleteProductAsync(productId);
+        CloseDeleteBox();
+        OnInitializedAsync();
+    }
+}

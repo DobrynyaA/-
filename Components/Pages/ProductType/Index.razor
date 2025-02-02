@@ -1,0 +1,74 @@
+﻿@page "/"
+@using System.Collections.Generic
+@using NikePro.Data
+@using NikePro.Interfaces.ProductTypeInterfaces
+@using NikePro.Services
+@using NikePro.Services.ProducytTypeServices
+@inject IProductTypeService ProductTypeService
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+
+
+<h1>Категории товаров</h1>
+
+@if (categories == null)
+{
+    <p>Загрузка категорий...</p>
+}
+else
+{
+    <div class="categories-grid">
+        @foreach (var category in categories)
+        {
+            <div class="category-container"  @onclick="@(() => NavigateToProduct(category.Id))">
+                <img src="@category.ProductTypeImagesURL" alt="@category.Name" class="category-image" />
+                <h3>@category.Name</h3>
+            </div>
+        }
+    </div>
+    <AuthorizeView Roles="Admin">
+        <button @onclick="NavigateToAddCategory">Редакторировать</button>
+    </AuthorizeView>
+}
+
+
+@code {
+
+    private List<ProductType> categories;
+
+    protected override async Task OnInitializedAsync()
+    {
+        categories = await ProductTypeService.GetAllProductTypesAsync();
+    }
+
+    private void NavigateToProduct(int categoryId)
+    {
+        if(categoryId != 0)
+        Navigation.NavigateTo("/Product?typeId="+categoryId.ToString());
+    }
+
+    private void NavigateToAddCategory()
+    {
+        Navigation.NavigateTo("/productType/AdminIndex");
+    }
+
+}
+
+<style>
+    .categories-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+    }
+
+    .category-container {
+        width: 23%; /* 4 контейнера в ряд */
+        margin: 1%;
+        text-align: center;
+    }
+
+    .category-image {
+        width: 100%; /* Адаптивная ширина изображения */
+    }
+
+</style>

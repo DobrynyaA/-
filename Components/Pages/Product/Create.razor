@@ -1,0 +1,79 @@
+﻿@page "/Product/Create"
+@using NikePro.Data
+@using NikePro.Interfaces.ProductInterfaces
+@inject NavigationManager NavigationManager
+@inject IProductService ProductService
+@rendermode InteractiveServer
+
+<PageTitle>Добавить новый товар</PageTitle>
+<h3>Добавить новый товар</h3>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="product" OnValidSubmit="AddProduct" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" />
+            <div class="mb-3">
+                <label for="Name" class="form-label">Название товара:</label>
+                <InputText id="Name" @bind-Value="product.Name" class="form-control" />
+                <ValidationMessage For="() => product.Name" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <input type="hidden" name="product.ProductTypeId" @bind="product.ProductTypeId" class="form-control" />
+                <ValidationMessage For="() => product.ProductTypeId" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="Description" class="form-label">Описание товара:</label>
+                <InputText id="Description" @bind-Value="product.Description" class="form-control" />
+                <ValidationMessage For="() => product.Description" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="Price" class="form-label">Цена товара:</label>
+                <InputNumber  id="Price" @bind-Value="product.Price" class="form-control" />
+                <ValidationMessage For="() => product.Price" class="text-danger" />
+            </div>
+            <div class="mb-3">
+                <label for="imageUpload" class="form-label">PЗагрузите фотографию:</label>
+                <InputFile id="imageUpload" OnChange="HandleFileSelected" />
+                <ValidationMessage For="() => product.ImagesUrl" class="text-danger" />
+            </div>
+            <button type="submit" class="btn btn-primary">Добавить</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/Product/AdminProduct?typeId=@typeId">Возврат к списку товаров</a>
+</div>
+@code {
+    [SupplyParameterFromQuery]
+    public int typeId { get; set; }
+    [SupplyParameterFromForm]
+    public Product product { get; set; } = new();
+    public IBrowserFile selectedImage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        product.ProductTypeId = typeId;
+    }
+    public async Task AddProduct()
+    {
+        if (selectedImage != null)
+        {
+
+            var filePath = Path.Combine("wwwroot", "images", selectedImage.Name);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await selectedImage.OpenReadStream(maxAllowedSize: 1024 * 1024 * 5).CopyToAsync(stream); 
+            }
+
+            product.ImagesUrl = $"/images/{selectedImage.Name}"; 
+        }
+        await ProductService.AddProductAsync(product);
+        NavigationManager.NavigateTo("/Product/AdminProduct?typeId=" + typeId);
+    }
+    private void HandleFileSelected(InputFileChangeEventArgs e)
+    {
+        selectedImage = e.GetMultipleFiles(1).FirstOrDefault(); 
+    }
+}
